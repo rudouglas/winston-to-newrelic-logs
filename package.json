@@ -1,14 +1,14 @@
 {
-  "name": "newrelic-winston",
-  "version": "2.1.0",
-  "description": "A newrelic transport for winston",
+  "name": "winston-to-newrelic-logs",
+  "version": "1.0.2",
+  "description": "A transport for winston to send to New Relic Log Product",
   "main": "index.js",
   "scripts": {
     "test": "mocha -b"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/namshi/newrelic-winston.git"
+    "url": "git+hhttps://github.com/rudouglas/winston-to-newrelic-logs.git"
   },
   "keywords": [
     "logging",
@@ -20,11 +20,11 @@
   "author": "Luciano Colosio",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/namshi/newrelic-winston/issues"
+    "url": "https://github.com/rudouglas/winston-to-newrelic-logs/issues"
   },
-  "homepage": "https://github.com/namshi/newrelic-winston#readme",
+  "homepage": "https://github.com/rudouglas/winston-to-newrelic-logs#readme",
   "dependencies": {
-    "newrelic": "^5.11.0",
+    "axios": "^0.21.1",
     "winston": "^3.0.0",
     "winston-transport": "^4.2.0"
   },

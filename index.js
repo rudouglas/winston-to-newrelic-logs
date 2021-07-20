@@ -2,6 +2,8 @@
 
 const winston = require('winston');
 const TransportStream = require('winston-transport');
+const axios = require('axios');
+
 const { LEVEL, MESSAGE } = require('triple-beam');
 
 /**
@@ -15,24 +17,32 @@ module.exports = class Newrelic extends TransportStream {
      * persisting log messages and metadata to a terminal or TTY.
      * @param {!Object} [options={}] - Options for this instance.
      */
-    constructor(options = {}) {
-        const env = options.env || process.env.NODE_ENV;
+    constructor(options = { licenseKey: '', apiUrl: '' }) {
         super(options);
-        this.newrelic = require('./newrelicHelper')(env);
-        this.name = 'newrelic-winston';
+        this.name = 'winston-to-newrelic-logs';
+        this.axiosClient = axios.create({
+            baseURL: options.apiUrl,
+            timeout: 5000,
+            headers: {
+                'X-License-Key': options.licenseKey,
+                'Content-Type': 'application/json'
+            }
+        });
     }
 
     /**
-     *
      * @param {Object} info
      * @param {function} callback
      */
     log(info, callback) {
         setImmediate(() => this.emit('logged', info));
-
-        if (info[LEVEL] === 'error') {
-            this.newrelic.noticeError(info[MESSAGE], typeof info.message === 'object' && info.message);
-        }
+        this.axiosClient.post('/log/v1', {
+            timestamp: Date.now(),
+            message: info[MESSAGE],
+            logtype: info[LEVEL]
+        }).catch(err => { //
+            console.error(err);
+        });
 
         callback();
     }
