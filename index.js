@@ -1,9 +1,8 @@
 'use strict';
 
-const winston = require('winston');
 const TransportStream = require('winston-transport');
 const axios = require('axios');
-
+const constants = require('../gatsby-plugin-newrelic-test/constants');
 const { LEVEL, MESSAGE } = require('triple-beam');
 
 /**
@@ -39,7 +38,8 @@ module.exports = class Newrelic extends TransportStream {
         this.axiosClient.post('/log/v1', {
             timestamp: Date.now(),
             message: info[MESSAGE],
-            logtype: info[LEVEL]
+            logtype: info[LEVEL],
+            sessionId: constants.sessionId,
         }).catch(err => { //
             console.error(err);
         });
