@@ -2,7 +2,6 @@
 
 const TransportStream = require('winston-transport');
 const axios = require('axios');
-const constants = require('../gatsby-plugin-newrelic-test/constants');
 const { LEVEL, MESSAGE } = require('triple-beam');
 
 /**
@@ -16,9 +15,10 @@ module.exports = class Newrelic extends TransportStream {
      * persisting log messages and metadata to a terminal or TTY.
      * @param {!Object} [options={}] - Options for this instance.
      */
-    constructor(options = { licenseKey: '', apiUrl: '' }) {
+    constructor(options = { licenseKey: '', apiUrl: '', pluginOptions: {} }) {
         super(options);
         this.name = 'winston-to-newrelic-logs';
+        this.pluginOptions = options.pluginOptions;
         this.axiosClient = axios.create({
             baseURL: options.apiUrl,
             timeout: 5000,
@@ -39,7 +39,8 @@ module.exports = class Newrelic extends TransportStream {
             timestamp: Date.now(),
             message: info[MESSAGE],
             logtype: info[LEVEL],
-            sessionId: constants.sessionId,
+            buildId: this.pluginOptions.buildId,
+            gatsbySite: this.pluginOptions.SITE_NAME,
         }).catch(err => { //
             console.error(err);
         });
