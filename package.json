@@ -1,6 +1,6 @@
 {
   "name": "winston-to-newrelic-logs",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A transport for winston to send to New Relic Log Product",
   "main": "index.js",
   "scripts": {

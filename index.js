@@ -15,7 +15,7 @@ module.exports = class Newrelic extends TransportStream {
      * persisting log messages and metadata to a terminal or TTY.
      * @param {!Object} [options={}] - Options for this instance.
      */
-    constructor(options = { licenseKey: '', apiUrl: '', pluginOptions: {} }) {
+    constructor(options = { licenseKey: '', apiUrl: '', pluginOptions: {}, }) {
         super(options);
         this.name = 'winston-to-newrelic-logs';
         this.pluginOptions = options.pluginOptions;
@@ -34,6 +34,7 @@ module.exports = class Newrelic extends TransportStream {
      * @param {function} callback
      */
     log(info, callback) {
+        const { logs: tags = {} } = this.pluginOptions;
         setImmediate(() => this.emit('logged', info));
         this.axiosClient.post('/log/v1', {
             timestamp: Date.now(),
@@ -41,6 +42,7 @@ module.exports = class Newrelic extends TransportStream {
             logtype: info[LEVEL],
             buildId: this.pluginOptions.buildId,
             gatsbySite: this.pluginOptions.SITE_NAME,
+            ...tags,
         }).catch(err => { //
             console.error(err);
         });
