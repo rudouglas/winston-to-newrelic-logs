@@ -35,7 +35,7 @@ module.exports = class Newrelic extends TransportStream {
      * @param {function} callback
      */
     log(info, callback) {
-        const { logs: tags = {} } = this.pluginOptions;
+        const { customTags = {} } = this.pluginOptions;
         this.info = info
         setImmediate(() => this.emit('logged', info));
         this.axiosClient.post('/log/v1', {
@@ -43,11 +43,10 @@ module.exports = class Newrelic extends TransportStream {
             message: info[MESSAGE],
             logtype: info[LEVEL],
             buildId: this.pluginOptions.buildId,
-            gatsbySite: this.pluginOptions.SITE_NAME,
-            ...tags,
+            ...customTags,
         }).catch(err => { //
             if(err != `Error: timeout of 5000ms exceeded`) {
-                console.error(`[@] winston-to-newrelic-logs: Error sending log data - ${err} - Message: ${JSON.parse(this.info[MESSAGE]).message}`);
+                console.error(`[@] winston-to-newrelic-logs: Error sending log data - ${err}`);
             }
         });
 
