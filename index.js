@@ -35,14 +35,15 @@ module.exports = class Newrelic extends TransportStream {
      * @param {function} callback
      */
     log(info, callback) {
-        const { customTags = {} } = this.pluginOptions;
+        const { customTags = {}, buildId, SITE_NAME } = this.pluginOptions;
         this.info = info
         setImmediate(() => this.emit('logged', info));
         this.axiosClient.post('/log/v1', {
             timestamp: Date.now(),
             message: info[MESSAGE],
             logtype: info[LEVEL],
-            buildId: this.pluginOptions.buildId,
+            buildId,
+            siteName: SITE_NAME,
             ...customTags,
         }).catch(err => { //
             if(err != `Error: timeout of 5000ms exceeded`) {
