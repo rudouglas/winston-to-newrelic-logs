@@ -13,18 +13,21 @@ module.exports = class Newrelic extends TransportStream {
     /**
      * Constructor function for the Console transport object responsible for
      * persisting log messages and metadata to a terminal or TTY.
-     * @param {!Object} [options={}] - Options for this instance.
+     * @param {Object} [options={}] - Options for this instance.
+     * @param {String} options.licenseKey - Your New Relic license key.
+     * @param {String} options.apiUrl - The New Relic log forwarding url.
+     * @param {Object} [options.pluginOptions={}] - Options to pass to the underlying Winston TransportStream
      */
-    constructor(options = { licenseKey: '', apiUrl: '', pluginOptions: {}, }) {
-        super(options);
+    constructor({ licenseKey = '', apiUrl = '', pluginOptions = {}, }) {
+        super({ licenseKey, apiUrl, pluginOptions });
         this.name = 'winston-to-newrelic-logs';
-        this.pluginOptions = options.pluginOptions;
+        this.pluginOptions = pluginOptions;
         this.info = null;
         this.axiosClient = axios.create({
-            baseURL: options.apiUrl,
+            baseURL: apiUrl,
             timeout: 5000,
             headers: {
-                'X-License-Key': options.licenseKey,
+                'X-License-Key': licenseKey,
                 'Content-Type': 'application/json'
             }
         });
